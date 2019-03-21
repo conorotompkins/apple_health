@@ -43,4 +43,9 @@ df_distance_day <- df_distance_day %>%
   mutate(distance_median = median(distance)) %>% 
   ungroup() %>% 
   mutate(distance_imputed = case_when(distance > 12 ~ distance_median,
-                                      distance <= 12 ~ distance))
+                                      distance <= 12 ~ distance),
+         quincy = case_when(ymd >= "2018-04-15" ~ TRUE,
+                            ymd < "2018-04-15" ~ FALSE),
+         location = case_when(ymd >= "2018-10-13" ~ "Suburban",
+                              ymd < "2018-10-13" ~ "Urban"),
+         location = factor(location, levels = c("Urban", "Suburban")))

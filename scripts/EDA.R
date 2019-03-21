@@ -62,7 +62,12 @@ df_distance_day <- df_distance_day %>%
   mutate(distance_median = median(distance)) %>% 
   ungroup() %>% 
   mutate(distance_imputed = case_when(distance > 12 ~ distance_median,
-                                      distance <= 12 ~ distance))
+                                      distance <= 12 ~ distance),
+         quincy = case_when(ymd >= "2018-04-15" ~ TRUE,
+                            ymd < "2018-04-15" ~ FALSE),
+         location = case_when(ymd >= "2018-10-13" ~ "Suburban",
+                              ymd < "2018-10-13" ~ "Urban"),
+         location = factor(location, levels = c("Urban", "Suburban")))
 
 
 df_distance_day %>%
@@ -74,4 +79,28 @@ df_distance_day %>%
 df_distance_day %>% 
   ggplot(aes(distance, distance_imputed)) +
   geom_point(alpha = .5)
-  
+
+df_distance_day %>% 
+  group_by(wday) %>% 
+  mutate(median = median(distance_imputed)) %>% 
+  ungroup() %>% 
+  ggplot(aes(wday, distance_imputed, color = wday)) +
+  geom_jitter() +
+  geom_point(aes(y = median), size = 5)
+
+df_distance_day %>% 
+  group_by(month) %>% 
+  mutate(median = median(distance_imputed)) %>% 
+  ungroup() %>% 
+  ggplot(aes(month, distance_imputed, color = month)) +
+  geom_jitter() +
+  geom_point(aes(y = median), size = 5)
+
+df_distance_day %>% 
+  group_by(wday, quincy, location) %>% 
+  mutate(median = median(distance_imputed)) %>% 
+  ungroup() %>% 
+  ggplot(aes(wday, distance_imputed, color = wday)) +
+  geom_jitter() +
+  geom_point(aes(y = median), size = 5) +
+  facet_grid(quincy ~ location)
