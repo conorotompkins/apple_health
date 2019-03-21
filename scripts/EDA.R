@@ -104,3 +104,7 @@ df_distance_day %>%
   geom_jitter() +
   geom_point(aes(y = median), size = 5) +
   facet_grid(quincy ~ location)
+
+df_distance_day %>% 
+  ggplot(aes(distance_imputed)) +
+  geom_density()
